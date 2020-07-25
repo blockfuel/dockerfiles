@@ -1,0 +1,50 @@
+FROM ubuntu
+
+RUN apt-get -y update \
+  && apt-get -y upgrade
+
+# make
+RUN apt-get -y install build-essential
+
+# python
+RUN apt-get -y install python3
+
+# pip
+RUN apt-get -y install python3-pip \
+  && pip3 install --upgrade pip
+
+# curl
+RUN apt-get -y install curl
+
+# git
+RUN apt-get -y install git
+
+# go
+RUN cd /root \
+  && curl -O https://storage.googleapis.com/golang/go1.12.9.linux-amd64.tar.gz \
+  && tar -xvf go1.12.9.linux-amd64.tar.gz \
+  && mv go /usr/local
+ENV PATH="${PATH}:/usr/local/go/bin"
+
+# slither
+RUN pip install slither-analyzer
+
+# mythril
+RUN pip install mythril
+
+# solc
+RUN mkdir -p /root/com.github/crytic \
+  && cd /root/com.github/crytic \
+  && git clone https://github.com/crytic/solc-select.git \
+  && ./solc-select/scripts/install.sh
+ENV PATH="/root/.solc-select:${PATH}"
+
+# reserve rsv
+RUN mkdir -p /root/com.github/reserve-protocol \
+  && cd /root/com.github/reserve-protocol \
+  && git clone https://github.com/reserve-protocol/rsv-v2.git \
+  && cd /root/com.github/reserve-protocol/rsv-v2
+
+RUN solc use 0.5.7
+VOLUME /root/com.github/reserve-protocol/rsv-v2
+WORKDIR /root/com.github/reserve-protocol/rsv-v2
