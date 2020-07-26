@@ -1,0 +1,26 @@
+FROM ubuntu
+
+RUN apt-get -y update \
+  && apt-get -y upgrade
+
+RUN apt-get -y install build-essential
+
+# curl
+RUN apt-get -y install curl
+
+# git
+RUN apt-get -y install git
+
+# nodejs
+RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - \
+  && apt-get -y install nodejs
+
+# buidler
+RUN mkdir -p /root/buidler \
+  && cd /root/buidler \
+  && npm init --yes \
+  && npm install -g @nomiclabs/buidler \
+  && npm install --save-dev --no-bin-links @nomiclabs/buidler-ethers ethers @nomiclabs/buidler-waffle ethereum-waffle chai
+
+ENV NODE_PATH /usr/lib/node_modules:/root/buidler/node_modules
+WORKDIR /root/workspace
